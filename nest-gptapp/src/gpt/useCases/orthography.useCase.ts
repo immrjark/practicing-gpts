@@ -12,7 +12,7 @@ export const orthographyCheckUseCase = async (
 
   const completion = await openai.chat.completions.create({
     model: 'gpt-4o',
-    temperature: 0.5,
+    temperature: 0.3,
     max_tokens: 100,
     messages: [
       {
@@ -26,15 +26,17 @@ export const orthographyCheckUseCase = async (
 
           Ejemplo de respuesta:
           { 
-            userScore: number,
-            errors: string[], // ['error -> solución]
-            message: string, // Usa algún que otro emoji pero sin pasarte y sé amable.
+            "userScore": number,
+            "errors": "string"[], // ['error -> solución]
+            "message": "string", // Usa algún que otro emoji pero sin pasarte y sé amable.
           }
         `,
       }, // este es el rol que quieres darle a GPT
       { role: 'user', content: propmt }, // el prompt es lo que se le va a enviar a GPT
     ],
   });
+
+  console.log(completion);
 
   // console.log(completion);
   const jsonResp = JSON.parse(completion.choices[0].message.content); // esto es lo que me interesa, la respuesta de GPT
