@@ -3,10 +3,17 @@ import { GPTMessage } from "../../components/chatBubbles/GPTMessage";
 import { MyMessage } from "../../components/chatBubbles/MyMessage";
 import { TypingLoader } from "../../components/loaders/TypingLoader";
 import { TextMessageBox } from "../../components/chatInputBoxes/TextMessageBox";
+import { orthographyCheckUseCase } from "../../../core/useCases/orthography.useCase";
+import { GPTOrthographyMsg } from "../../components/chatBubbles/GPTOrthographyMsg";
 
 interface Message {
   text: string;
   isGPT: boolean;
+  info?: {
+    userScore: number;
+    errors: string[];
+    message: string;
+  };
 }
 
 export const OrthographyPage = () => {
@@ -18,6 +25,29 @@ export const OrthographyPage = () => {
     setMessages((previous) => [...previous, { text: text, isGPT: false }]);
 
     // TODO: USECASE
+    const data = await orthographyCheckUseCase(text);
+    if (data.ok) {
+      setMessages((previous) => [
+        ...previous,
+        {
+          text: "No se puedo realizar la corrección. Inténtalo más tarde.",
+          isGPT: true,
+        },
+      ]);
+    } else {
+      setMessages((previous) => [
+        ...previous,
+        {
+          text: data.message,
+          isGPT: true,
+          info: {
+            errors: data.errors,
+            userScore: data.userScore,
+            message: data.message,
+          },
+        },
+      ]);
+    }
 
     setIsLoading(false);
 
@@ -34,7 +64,12 @@ export const OrthographyPage = () => {
           {messages.map((message, index) =>
             // el index aquí no se debe poner nunca como key pero...
             message.isGPT ? (
-              <GPTMessage key={index} text="OpenAI text" />
+              <GPTOrthographyMsg
+                key={index}
+                errors={message.info!.errors}
+                message={message.info!.message}
+                userScore={message.info!.userScore}
+              />
             ) : (
               <MyMessage key={index} text={message.text} />
             )
