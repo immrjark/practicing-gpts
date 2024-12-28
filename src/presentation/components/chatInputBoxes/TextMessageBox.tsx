@@ -3,11 +3,11 @@ import { FormEvent, useState } from "react";
 interface Props {
   onSendMessage: (message: string) => void;
   placeHolder?: string;
-  desableCorrections?: boolean;
+  disableCorrections?: boolean;
 }
 export const TextMessageBox = ({
   onSendMessage,
-  desableCorrections = false,
+  disableCorrections = false,
   placeHolder,
 }: Props) => {
   const [message, setMessage] = useState("");
@@ -33,9 +33,9 @@ export const TextMessageBox = ({
             name="message"
             className="flex w-full border rounded-xl text-gray-800 focus:outline-none focus:border-indigo-500 pl-4 h-10"
             placeholder={placeHolder}
-            autoComplete={desableCorrections ? "on" : "off"}
-            autoCorrect={desableCorrections ? "on" : "off"}
-            spellCheck={desableCorrections ? "true" : "false"}
+            autoComplete={disableCorrections ? "on" : "off"}
+            autoCorrect={disableCorrections ? "on" : "off"}
+            spellCheck={disableCorrections ? "true" : "false"}
             value={message}
             onChange={(e) => setMessage(e.target.value)}
           />

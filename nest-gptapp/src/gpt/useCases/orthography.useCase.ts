@@ -26,7 +26,7 @@ export const orthographyCheckUseCase = async (
           Ejemplo de respuesta:
           {
             "userScore": number,
-            "error": "string", // ['error -> solución'] Debe ser un array
+            "errors": "string", // ['error -> solución'] Debe ser un array
             "message": "string", // Usa algún que otro emoji pero sin pasarte y sé amable.
           }
         `,

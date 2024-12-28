@@ -26,7 +26,7 @@ export const OrthographyPage = () => {
 
     // TODO: USECASE
     const data = await orthographyCheckUseCase(text);
-    if (data.ok) {
+    if (!data.ok) {
       setMessages((previous) => [
         ...previous,
         {
@@ -66,9 +66,10 @@ export const OrthographyPage = () => {
             message.isGPT ? (
               <GPTOrthographyMsg
                 key={index}
-                errors={message.info!.errors}
-                message={message.info!.message}
-                userScore={message.info!.userScore}
+                {...message.info!}
+                // errors={message.info!.errors}
+                // message={message.info!.message}
+                // userScore={message.info!.userScore}
               />
             ) : (
               <MyMessage key={index} text={message.text} />
@@ -77,7 +78,7 @@ export const OrthographyPage = () => {
 
           {isLoading && (
             <div className="col-start-1 col-end-12 fade-in">
-              <TypingLoader className="fade-in" />
+              <TypingLoader />
             </div>
           )}
         </div>
@@ -86,7 +87,7 @@ export const OrthographyPage = () => {
       <TextMessageBox
         onSendMessage={handlePost}
         placeHolder="Type anything"
-        desableCorrections
+        disableCorrections
       />
     </div>
   );
