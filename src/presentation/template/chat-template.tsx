@@ -50,7 +50,7 @@ export const ChatTemplate = () => {
       <TextMessageBox
         onSendMessage={handlePost}
         placeHolder="Type anything"
-        desableCorrections
+        disableCorrections
       />
     </div>
   );
