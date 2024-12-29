@@ -1,5 +1,3 @@
-// import { ProsConsResponse } from "../../interfaces/prosCons.response";
-
 export const prosConsStreamUseCase = async (prompt: string) => {
   try {
     const resp = await fetch(

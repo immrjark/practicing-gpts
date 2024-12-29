@@ -3,7 +3,8 @@ import { GPTMessage } from "../../components/chatBubbles/GPTMessage";
 import { MyMessage } from "../../components/chatBubbles/MyMessage";
 import { TextMessageBox } from "../../components/chatInputBoxes/TextMessageBox";
 import { TypingLoader } from "../../components/loaders/TypingLoader";
-import { prosConsStreamUseCase } from "../../../core/useCases/prosConsStream.useCase";
+// import { prosConsStreamUseCase } from "../../../core/useCases/prosConsStream.useCase";
+import { prosConsStreamGeneratorUseCasen } from "../../../core/useCases/prosConsStreamGenerator.useCase";
 
 interface Message {
   text: string;
@@ -19,29 +20,42 @@ export const ProsConsStreamPage = () => {
     setMessages((previous) => [...previous, { text: text, isGPT: false }]);
 
     // TODO: USECASE
-    const reader = await prosConsStreamUseCase(text);
-    // setIsLoading(false);
+    const stream = await prosConsStreamGeneratorUseCasen(text);
+    setIsLoading(false);
+    setMessages((messages) => [...messages, { text: "", isGPT: true }]);
 
-    if (!reader) return alert("Error en la comparación");
-    // Generar el último msg
-    const decoder = new TextDecoder("utf-8");
-    let msgs = "";
-    setMessages((mssgs) => [...mssgs, { text: msgs, isGPT: true }]);
-
-    while (true) {
-      const { value, done } = await reader.read();
-      if (done) break;
-
-      const decodedChunk = decoder.decode(value, { stream: true });
-      msgs += decodedChunk;
-
-      // esto sirve para actualizar el último mensaje y que no se siga propagando
-      setMessages((mssgs) => {
-        const newMsgs = [...mssgs];
-        newMsgs[newMsgs.length - 1].text = msgs;
+    for await (const text of stream) {
+      setMessages((messages) => {
+        const newMsgs = [...messages];
+        newMsgs[newMsgs.length - 1].text = text;
         return newMsgs;
       });
     }
+
+    // gracias a las funciones generadoras podemos comentar todo este código
+    // const reader = await prosConsStreamUseCase(text);
+    // // setIsLoading(false);
+
+    // if (!reader) return alert("Error en la comparación");
+    // // Generar el último msg
+    // const decoder = new TextDecoder("utf-8");
+    // let msgs = "";
+    // setMessages((mssgs) => [...mssgs, { text: msgs, isGPT: true }]);
+
+    // while (true) {
+    //   const { value, done } = await reader.read();
+    //   if (done) break;
+
+    //   const decodedChunk = decoder.decode(value, { stream: true });
+    //   msgs += decodedChunk;
+
+    //   // esto sirve para actualizar el último mensaje y que no se siga propagando
+    //   setMessages((mssgs) => {
+    //     const newMsgs = [...mssgs];
+    //     newMsgs[newMsgs.length - 1].text = msgs;
+    //     return newMsgs;
+    //   });
+    // }
   };
 
   return (
