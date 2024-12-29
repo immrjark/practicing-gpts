@@ -7,6 +7,8 @@ import { OrthographyDto } from './dtos/orthography.dto';
 
 import { ProsConsDiscusserDto } from './dtos/prosConsDiscusser.dto';
 
+import { TranslateDto } from './dtos/translate.dto';
+
 @Controller('gpt')
 export class GptController {
   constructor(private readonly gptService: GptService) {}
@@ -17,7 +19,7 @@ export class GptController {
   }
 
   @Post('pros-cons-discusser')
-  prosConsDicusser(@Body() prosConsDiscusserDto: ProsConsDiscusserDto) {
+  async prosConsDicusser(@Body() prosConsDiscusserDto: ProsConsDiscusserDto) {
     return this.gptService.prosConsDicusser(prosConsDiscusserDto);
   }
 
@@ -40,5 +42,10 @@ export class GptController {
     }
 
     res.end();
+  }
+
+  @Post('translate')
+  async translate(@Body() translateDto: TranslateDto) {
+    return this.gptService.translateDto(translateDto);
   }
 }
