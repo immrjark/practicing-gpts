@@ -21,7 +21,9 @@ export const prosConsDicusserStreamUseCase = async (
         content: `
           Se te dará una pregunta y tu tarea es dar una respuesta con pros y contras,
           la respuesta debe de ser en formato markdown,
-          los pros y contras deben de estar en una lista,
+          los pros y contras deben de estar en una lista.
+
+          Ajústate a 150 tokens para que el mensaje no se vea cortado y así puede tener más sentido.
         `,
       },
       { role: 'user', content: prompt },
