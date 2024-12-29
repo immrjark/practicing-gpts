@@ -19,11 +19,29 @@ export const ProsConsStreamPage = () => {
     setMessages((previous) => [...previous, { text: text, isGPT: false }]);
 
     // TODO: USECASE
-    await prosConsStreamUseCase(text);
+    const reader = await prosConsStreamUseCase(text);
+    // setIsLoading(false);
 
-    setIsLoading(false);
+    if (!reader) return alert("Error en la comparación");
+    // Generar el último msg
+    const decoder = new TextDecoder("utf-8");
+    let msgs = "";
+    setMessages((mssgs) => [...mssgs, { text: msgs, isGPT: true }]);
 
-    //TODO: AÑADIR MSG DE ISGPT EN TRUE
+    while (true) {
+      const { value, done } = await reader.read();
+      if (done) break;
+
+      const decodedChunk = decoder.decode(value, { stream: true });
+      msgs += decodedChunk;
+
+      // esto sirve para actualizar el último mensaje y que no se siga propagando
+      setMessages((mssgs) => {
+        const newMsgs = [...mssgs];
+        newMsgs[newMsgs.length - 1].text = msgs;
+        return newMsgs;
+      });
+    }
   };
 
   return (
@@ -36,7 +54,7 @@ export const ProsConsStreamPage = () => {
           {messages.map((message, index) =>
             // el index aquí no se debe poner nunca como key pero...
             message.isGPT ? (
-              <GPTMessage key={index} text="OpenAI text" />
+              <GPTMessage key={index} text={message.text} />
             ) : (
               <MyMessage key={index} text={message.text} />
             )

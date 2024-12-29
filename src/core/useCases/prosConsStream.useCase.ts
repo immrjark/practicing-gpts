@@ -24,20 +24,21 @@ export const prosConsStreamUseCase = async (prompt: string) => {
       return null;
     }
 
-    const decoder = new TextDecoder("utf-8");
-    let text = "";
+    return reader;
+    // const decoder = new TextDecoder("utf-8");
+    // let text = "";
 
-    while (true) {
-      const { value, done } = await reader.read();
+    // while (true) {
+    //   const { value, done } = await reader.read();
 
-      if (done) {
-        break;
-      }
+    //   if (done) {
+    //     break;
+    //   }
 
-      const decodedChunk = decoder.decode(value, { stream: true });
-      text += decodedChunk;
-      console.log(text);
-    }
+    //   const decodedChunk = decoder.decode(value, { stream: true });
+    //   text += decodedChunk;
+    //   console.log(text);
+    // }
 
     return null;
   } catch (error) {
