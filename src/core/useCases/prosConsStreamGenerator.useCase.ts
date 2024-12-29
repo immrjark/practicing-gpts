@@ -1,6 +1,9 @@
 // funcion generadora https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/function*
 
-export async function* prosConsStreamGeneratorUseCasen(prompt: string) {
+export async function* prosConsStreamGeneratorUseCasen(
+  prompt: string,
+  abortSignal: AbortSignal
+) {
   try {
     const resp = await fetch(
       `${import.meta.env.VITE_GPT_API}/pros-cons-discusser-stream`,
@@ -10,6 +13,7 @@ export async function* prosConsStreamGeneratorUseCasen(prompt: string) {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ prompt }),
+        signal: abortSignal,
 
         // TODO: ABORTSIGNAL
       }

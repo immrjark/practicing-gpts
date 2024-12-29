@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { GPTMessage } from "../../components/chatBubbles/GPTMessage";
 import { MyMessage } from "../../components/chatBubbles/MyMessage";
 import { TextMessageBox } from "../../components/chatInputBoxes/TextMessageBox";
@@ -12,15 +12,27 @@ interface Message {
 }
 
 export const ProsConsStreamPage = () => {
+  const abortController = useRef(new AbortController());
+  const isRunning = useRef(false);
+
   const [isLoading, setIsLoading] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
 
   const handlePost = async (text: string) => {
+    if (isRunning.current) {
+      abortController.current.abort(); // pongo aquí arriba el abort para que en cuentao llegue esta señal la aborte
+      abortController.current = new AbortController(); // esto es para que el nuevo prompt no se aborte, solo aborte el primero
+    }
+
     setIsLoading(true);
+    isRunning.current = true;
     setMessages((previous) => [...previous, { text: text, isGPT: false }]);
 
     // TODO: USECASE
-    const stream = await prosConsStreamGeneratorUseCasen(text);
+    const stream = prosConsStreamGeneratorUseCasen(
+      text,
+      abortController.current.signal // para aboratr cuando vuelva a escribir otro prompt antes de que termine
+    );
     setIsLoading(false);
     setMessages((messages) => [...messages, { text: "", isGPT: true }]);
 
@@ -31,6 +43,7 @@ export const ProsConsStreamPage = () => {
         return newMsgs;
       });
     }
+    isRunning.current = false;
 
     // gracias a las funciones generadoras podemos comentar todo este código
     // const reader = await prosConsStreamUseCase(text);
