@@ -10,6 +10,8 @@ import { prosConsDicusserStreamUseCase } from './useCases/prosConsDiscusserStrea
 
 import { TranslateDto } from './dtos/translate.dto';
 import { translateUseCase } from './useCases/translate.useCase';
+import { TextToAudioDto } from './dtos/textToAudio.dto';
+import { textToAudioUseCase } from './useCases/textToAudio.useCase';
 
 @Injectable()
 export class GptService {
@@ -34,5 +36,9 @@ export class GptService {
 
   async translateDto({ prompt, lang }: TranslateDto) {
     return await translateUseCase(this.openai, { prompt, lang });
+  }
+
+  async textToAudio({ prompt, voice }: TextToAudioDto) {
+    return await textToAudioUseCase(this.openai, { prompt, voice });
   }
 }
