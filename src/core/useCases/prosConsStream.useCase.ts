@@ -37,8 +37,6 @@ export const prosConsStreamUseCase = async (prompt: string) => {
     //   text += decodedChunk;
     //   console.log(text);
     // }
-
-    return null;
   } catch (error) {
     return null;
   }

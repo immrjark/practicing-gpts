@@ -4,6 +4,7 @@ import { MyMessage } from "../../components/chatBubbles/MyMessage";
 // import { TextMessageBox } from "../../components/chatInputBoxes/TextMessageBox";
 import { TypingLoader } from "../../components/loaders/TypingLoader";
 import { TextMessageBoxWithSelect } from "../../components/chatInputBoxes/TextMessageBoxWithSelect";
+import { translateTextUseCase } from "../../../core/useCases/translate.useCase";
 
 interface Message {
   text: string;
@@ -27,15 +28,22 @@ export const TranslatePage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
 
-  const handlePost = async (text: string, selectedOption: string) => {
+  const handlePost = async (text: string, selectedLanguage: string) => {
     setIsLoading(true);
-    const newMsg = `Traduce: "${text}" al idioma ${selectedOption}`;
+    const newMsg = `Traduce: "${text}" al idioma ${selectedLanguage}`;
 
     setMessages((previous) => [...previous, { text: newMsg, isGPT: false }]);
 
     // TODO: USECASE
 
+    const { ok, message } = await translateTextUseCase(text, selectedLanguage);
     setIsLoading(false);
+    if (!ok) {
+      setIsLoading(false);
+      return alert(`Error: ${message}`);
+    }
+
+    setMessages((previous) => [...previous, { text: message, isGPT: true }]);
 
     //TODO: AÑADIR MSG DE ISGPT EN TRUE
   };
